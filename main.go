@@ -1,17 +1,18 @@
 package main
 
 import (
-	"log"
-	"os"
+	"net/http"
 
-	"github.com/JonaVDM/wake-the-wizzard/wol"
+	"github.com/JonaVDM/wake-the-wizzard/server"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("No mac address provided")
+	srv := server.Server{
+		Router: mux.NewRouter(),
 	}
 
-	mac := os.Args[1]
-	wol.SendWol(mac)
+	srv.Init()
+
+	http.ListenAndServe(":3000", srv.Router)
 }
