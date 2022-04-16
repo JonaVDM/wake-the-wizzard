@@ -11,5 +11,5 @@ type CustomFS struct {
 }
 
 func (c CustomFS) Open(name string) (fs.File, error) {
-	return c.content.Open(path.Join("frontend", name))
+	return c.content.Open(path.Join("frontend/build", name))
 }
