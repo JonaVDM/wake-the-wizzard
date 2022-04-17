@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getList } from "./api";
+import { getList, wakePc } from "./api";
 import { Button } from "./components/button";
 import { Container } from "./components/container";
 import { Paragraph, Title } from "./components/typegraphics";
@@ -40,11 +40,15 @@ function App() {
     return list.map((item) => {
       return (
         <Row>
-          <Button>Wake</Button>
+          <Button onClick={() => onWake(item)}>Wake</Button>
           <Paragraph>{item}</Paragraph>
         </Row>
       );
     });
+  };
+
+  const onWake = (mac: string) => {
+    wakePc(mac);
   };
 
   return (

@@ -7,4 +7,6 @@ export const Button = styled.button`
   color: white;
   border: 0;
   border-radius: 3px;
+
+  cursor: pointer;
 `;
