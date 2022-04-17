@@ -14,11 +14,14 @@ const Page = styled.div`
 
 const Row = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
-  max-width: 50rem;
-  padding: 0 10px;
-  margin: 5px 0;
+  padding: 0 2px;
+  margin-bottom: 3px;
+  align-items: center;
+
+  *:first-child {
+    margin-right: 5px;
+  }
 `;
 
 function App() {
@@ -37,8 +40,8 @@ function App() {
     return list.map((item) => {
       return (
         <Row>
-          <Paragraph>{item}</Paragraph>
           <Button>Wake</Button>
+          <Paragraph>{item}</Paragraph>
         </Row>
       );
     });
