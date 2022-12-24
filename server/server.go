@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/JonaVDM/wake-the-wizzard/storage"
 	"github.com/JonaVDM/wake-the-wizzard/wol"
@@ -33,7 +34,8 @@ func wakePc(c *gin.Context) {
 			continue
 		}
 
-		wol.SendWol(item.Mac)
+		mac := strings.ReplaceAll(item.Mac, ":", "")
+		wol.SendWol(mac)
 		c.String(http.StatusOK, "ok")
 		return
 	}
