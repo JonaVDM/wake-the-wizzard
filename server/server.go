@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/JonaVDM/wake-the-wizzard/storage"
+	"github.com/JonaVDM/wake-the-wizzard/wol"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	r.GET("/api/wake/:id", wakePc)
@@ -16,11 +16,29 @@ func main() {
 	r.POST("/api/pc", postPc)
 	r.DELETE("/api/pc/:id", deletePc)
 
-	r.Run()
+	r.Run(":3080")
 }
 
 func wakePc(c *gin.Context) {
+	id := c.Param("id")
+	items, err := storage.Get()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+	}
 
+	for _, item := range items {
+		if item.Id != id {
+			continue
+		}
+
+		wol.SendWol(item.Mac)
+		c.String(http.StatusOK, "ok")
+		return
+	}
+
+	c.String(http.StatusBadRequest, "pc not found")
 }
 
 func getPc(c *gin.Context) {
