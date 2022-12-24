@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"net/http"
 	"strings"
 
@@ -9,13 +10,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//go:embed frontend/dist/*
+var static embed.FS
+
 func main() {
 	r := gin.Default()
+
+	r.SetTrustedProxies(nil)
 
 	r.GET("/api/wake/:id", wakePc)
 	r.GET("/api/pc", getPc)
 	r.POST("/api/pc", postPc)
 	r.DELETE("/api/pc/:id", deletePc)
+	r.StaticFileFS("/", "app.html", http.FS(CustomFS{static}))
+	r.StaticFS("/assets", http.FS(CustomAssetsFS{static}))
 
 	r.Run(":3080")
 }

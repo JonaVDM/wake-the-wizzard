@@ -11,5 +11,13 @@ type CustomFS struct {
 }
 
 func (c CustomFS) Open(name string) (fs.File, error) {
-	return c.content.Open(path.Join("frontend/build", name))
+	return c.content.Open(path.Join("frontend/dist", name))
+}
+
+type CustomAssetsFS struct {
+	content embed.FS
+}
+
+func (c CustomAssetsFS) Open(name string) (fs.File, error) {
+	return c.content.Open(path.Join("frontend/dist/assets", name))
 }
