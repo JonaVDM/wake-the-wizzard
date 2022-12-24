@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { deleteDevice, Device, wakeDevice } from '../api';
+import { deleteDevice, wakeDevice } from '../api';
 import { DeviceContext } from '../DeviceContext';
 
 export function DeviceCard({ id, name, mac }: Device) {
@@ -17,24 +17,24 @@ export function DeviceCard({ id, name, mac }: Device) {
 
   return (
     <div className='bg-gray-200 my-3 p-3 rounded-md hover:bg-gray-100 hover:shadow-2xl transition-all'>
-      <div className='flex justify-between'>
+      <div className='md:flex justify-between'>
         <p className='font-bold text-2xl'>{name}</p>
         <div className='text-gray-200 text-lg'>
           <button
-            className='bg-red-600 hover:bg-red-700 transition-color px-3 rounded-md mr-2'
+            className='bg-red-600 hover:bg-red-700 transition-color mr-2 px-3 py-2 rounded-md'
             onClick={() => setConfirmDelete(!confirmDelete)}
           >
             Delete
           </button>
           <button
-            className='bg-green-600 hover:bg-green-700 transition-color px-3 rounded-md'
+            className='bg-green-600 hover:bg-green-700 transition-color px-3 py-2 rounded-md'
             onClick={wakePc}
           >
             Wake
           </button>
         </div>
       </div>
-      <div className='flex justify-between'>
+      <div className='md:flex justify-between'>
         <p>{mac}</p>
         <p className='text-sm text-gray-500'>{id}</p>
       </div>
