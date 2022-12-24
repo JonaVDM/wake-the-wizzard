@@ -1,64 +1,35 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { getList, wakePc } from "./api";
-import { Button } from "./components/button";
-import { Container } from "./components/container";
-import { Paragraph, Title } from "./components/typegraphics";
-
-const Page = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Row = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 0 2px;
-  margin-bottom: 3px;
-  align-items: center;
-
-  *:first-child {
-    margin-right: 5px;
-  }
-`;
+import { useContext, useState } from 'react';
+import { AddDevice } from './components/AddDevice';
+import { DeviceCard } from './components/DeviceCard';
+import { DeviceContext } from './DeviceContext';
 
 function App() {
-  const [list, setList] = useState<string[]>([]);
-
-  useEffect(() => {
-    loadList();
-  }, []);
-
-  const loadList = async () => {
-    const list = await getList();
-    setList(list);
-  };
-
-  const renderList = () => {
-    return list.map((item) => {
-      return (
-        <Row>
-          <Button onClick={() => onWake(item)}>Wake</Button>
-          <Paragraph>{item}</Paragraph>
-        </Row>
-      );
-    });
-  };
-
-  const onWake = (mac: string) => {
-    wakePc(mac);
-  };
+  const { devices } = useContext(DeviceContext);
+  const [toggleAdd, setToggleAdd] = useState<boolean>(false);
 
   return (
-    <Page>
-      <Container>
-        <Title>Wake the Wizzard</Title>
+    <div className='w-full max-w-2xl mx-2 my-4'>
+      <div className='flex justify-between'>
+        <h1 className='text-3xl font-bold text-gray-300'>Wake On Lan</h1>
 
-        {renderList()}
-      </Container>
-    </Page>
+        <button
+          className='bg-blue-600 text-white px-5 rounded-md hover:bg-blue-700 transition-all'
+          onClick={() => setToggleAdd(!toggleAdd)}
+        >
+          Add
+        </button>
+      </div>
+
+      {toggleAdd && <AddDevice />}
+      {devices.map((device) => (
+        <DeviceCard
+          key={device.id}
+          name={device.name}
+          id={device.id}
+          mac={device.mac}
+        />
+      ))}
+    </div>
   );
 }
 
