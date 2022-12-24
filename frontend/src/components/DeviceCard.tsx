@@ -16,7 +16,7 @@ export function DeviceCard({ id, name, mac }: Device) {
   };
 
   return (
-    <div className='bg-gray-300 my-3 p-3 rounded-md hover:bg-gray-200 hover:shadow-2xl transition-all'>
+    <div className='bg-gray-200 my-3 p-3 rounded-md hover:bg-gray-100 hover:shadow-2xl transition-all'>
       <div className='flex justify-between'>
         <p className='font-bold text-2xl'>{name}</p>
         <div className='text-gray-200 text-lg'>
