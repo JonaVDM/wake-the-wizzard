@@ -3,6 +3,7 @@ package wol
 import (
 	"encoding/hex"
 	"net"
+	"strings"
 )
 
 func SendWol(mac string) error {
@@ -35,7 +36,7 @@ func buildMessage(mac string) ([]byte, error) {
 	}
 
 	// Convert the mac address to bytes
-	macBytes, err := hex.DecodeString(mac)
+	macBytes, err := hex.DecodeString(strings.ToLower(mac))
 	if err != nil {
 		return []byte{}, err
 	}
