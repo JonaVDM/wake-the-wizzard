@@ -53,6 +53,12 @@ func Add(name, mac string) (string, error) {
 		return "", errors.New("name cannot contain ;")
 	}
 
+	if _, err := os.Stat("wol-server"); errors.Is(err, os.ErrNotExist) {
+		if err := os.Mkdir("wol-server", os.ModePerm); err != nil {
+			return "", errors.New("could not create folder")
+		}
+	}
+
 	f, err := os.OpenFile(FILENAME, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return "", errors.New("could not open file")
