@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { Device, getDevices } from './api';
+import { getDevices } from './api';
 
 interface Context {
   devices: Device[];
@@ -23,7 +23,7 @@ export function DeviceContextProvider({ children }: Props) {
   const [devices, setDevices] = useState<Device[]>(defaultValue.devices);
 
   const addDevice = (device: Device) => {
-    setDevices([...devices]);
+    setDevices([...devices, device]);
   };
 
   const removeDevice = (id: String) => {

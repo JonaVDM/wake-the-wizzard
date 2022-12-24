@@ -9,6 +9,7 @@ export function AddDevice() {
 
   const [nameError, setNameError] = useState<string>('');
   const [macError, setMacError] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     setName('');
@@ -23,7 +24,18 @@ export function AddDevice() {
       return;
     }
 
-    await addDevice(name.trim(), mac.trim().toLowerCase());
+    const request = await addDevice(name.trim(), mac.trim().toLowerCase());
+    const data = await request.json();
+    if (data.error) {
+      setError(data.error);
+      return;
+    }
+    const device: Device = {
+      id: data.id,
+      name: name.trim(),
+      mac: mac.trim().toLowerCase(),
+    };
+    deviceContext.addDevice(device);
   };
 
   const validate = (): boolean => {
@@ -71,6 +83,7 @@ export function AddDevice() {
       >
         Add
       </button>
+      {error != '' && <p className='text-red-500'>{error}</p>}
     </div>
   );
 }

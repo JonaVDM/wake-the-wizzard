@@ -73,12 +73,13 @@ func postPc(c *gin.Context) {
 		return
 	}
 
-	if _, err := storage.Add(data.Name, data.Mac); err != nil {
+	id, err := storage.Add(data.Name, data.Mac)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.String(http.StatusOK, "ok")
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func deletePc(c *gin.Context) {
@@ -88,5 +89,5 @@ func deletePc(c *gin.Context) {
 		return
 	}
 
-	c.String(http.StatusOK, "ok")
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
