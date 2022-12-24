@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const FILENAME string = "data.txt"
+const FILENAME string = "wol-server/data.txt"
 
 type Item struct {
 	Id   string `json:"id"`
