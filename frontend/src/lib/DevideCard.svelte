@@ -6,12 +6,18 @@
   export let name: string;
   export let mac: string;
 
-  const wakePc = () => {
-    wakeDevice(id);
+  let loadingDelete = false;
+  let loadingWaking = false;
+
+  const wakePc = async () => {
+    loadingWaking = true;
+    await wakeDevice(id);
+    loadingWaking = false;
   };
 
-  const deletePc = () => {
-    deleteDevice(id);
+  const deletePc = async () => {
+    loadingDelete = true;
+    await deleteDevice(id);
   };
 
   let showDelete = false;
@@ -26,7 +32,7 @@
       <p>{name}</p>
       <div class="grid half">
         <button class="warning" on:click={toggleDelete}>Delete</button>
-        <button on:click={wakePc}>Wake</button>
+        <button aria-busy={loadingWaking} on:click={wakePc}>Wake</button>
       </div>
     </div>
 
@@ -37,7 +43,9 @@
         </p>
 
         <div class="grid">
-          <button on:click={deletePc} class="warning">Yes, delete it</button>
+          <button aria-busy={loadingDelete} on:click={deletePc} class="warning">
+            Yes, delete it
+          </button>
           <button on:click={toggleDelete}>No, keep it</button>
         </div>
       </div>

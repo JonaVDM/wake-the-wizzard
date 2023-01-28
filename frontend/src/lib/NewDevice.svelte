@@ -5,9 +5,19 @@
   let showForm = false;
   let mac = '';
   let name = '';
+  let loading = false;
+  let error = '';
 
-  const submit = () => {
-    addDevice(name, mac);
+  const submit = async () => {
+    try {
+      loading = true;
+      await addDevice(name, mac);
+      loading = false;
+      showForm = false;
+    } catch (e) {
+      loading = false;
+      error = 'Could not create new entry';
+    }
   };
 </script>
 
@@ -35,7 +45,12 @@
           </label>
         </div>
 
-        <button on:click|preventDefault={submit}>Create</button>
+        {#if error != ''}
+          <p class="error">{error}</p>
+        {/if}
+        <button aria-busy={loading} on:click|preventDefault={submit}>
+          Create
+        </button>
       </div>
     {/if}
   </form>
@@ -49,5 +64,9 @@
 
   .half {
     width: 50%;
+  }
+
+  .error {
+    color: rgb(192, 2, 2);
   }
 </style>
