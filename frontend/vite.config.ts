@@ -11,4 +11,11 @@ export default defineConfig({
       }
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        app: './app.html',
+      },
+    },
+  }
 })
