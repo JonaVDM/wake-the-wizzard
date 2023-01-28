@@ -1,7 +1,9 @@
 FROM node:18-alpine AS frontend-builder
 WORKDIR /app
-COPY frontend/package*.json .
-RUN npm ci
+RUN npm i -g pnpm
+COPY frontend/package.json .
+COPY frontend/pnpm-lock.yaml .
+RUN pnpm install --frozen-lockfile
 COPY frontend .
 RUN npm run build
 
