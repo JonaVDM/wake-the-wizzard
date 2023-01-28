@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { loadDevices, devices } from './lib/api';
   import DevideCard from './lib/DevideCard.svelte';
+  import NewDevice from './lib/NewDevice.svelte';
 
   let error = '';
 
@@ -16,7 +17,8 @@
 
 <main class="container">
   <h1>Wake On Lan</h1>
-  <button>Add new</button>
+
+  <NewDevice />
 
   {#if error}
     <article>

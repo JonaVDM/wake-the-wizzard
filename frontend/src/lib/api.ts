@@ -8,14 +8,17 @@ export async function loadDevices() {
   devices.set(body);
 }
 
-export async function addDevice(name: string, mac: string): Promise<Response> {
-  return fetch('/api/pc', {
+export async function addDevice(name: string, mac: string) {
+  const req = await fetch('/api/pc', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ name, mac })
   });
+
+  const data = await req.json();
+  devices.update(devices => [...devices, { name, mac, id: data.id }]);
 }
 
 export async function deleteDevice(id: string) {
