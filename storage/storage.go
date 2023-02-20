@@ -2,15 +2,14 @@ package storage
 
 import (
 	"errors"
-	"fmt"
-	"io/fs"
 	"os"
-	"strings"
 
 	"github.com/google/uuid"
+	"gopkg.in/yaml.v2"
 )
 
-const FILENAME string = "wol-server/data.txt"
+const FILENAME string = "wol-server/data.yml"
+const FOLDER string = "wol-server"
 
 type Item struct {
 	Id   string `json:"id"`
@@ -20,55 +19,40 @@ type Item struct {
 
 // Get returns the whole list that is currently there
 func Get() ([]Item, error) {
-	data, err := os.ReadFile(FILENAME)
-	if err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
-			return []Item{}, nil
-		}
-		return nil, errors.New("could not open file")
+	file, err := os.ReadFile(FILENAME)
+
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return []Item{}, nil
+	} else if err != nil {
+		return nil, err
 	}
 
-	line := strings.TrimSpace(string(data))
-	lines := strings.Split(line, "\n")
-	items := make([]Item, len(lines))
-
-	for i, l := range lines {
-		spl := strings.Split(l, ";")
-		if len(spl) != 3 {
-			return nil, errors.New("invalid data")
-		}
-		items[i] = Item{
-			Id:   spl[0],
-			Name: spl[1],
-			Mac:  spl[2],
-		}
+	var item []Item
+	if err := yaml.Unmarshal(file, &item); err != nil {
+		return nil, err
 	}
 
-	return items, nil
+	return item, nil
 }
 
 // Add a entry to the file, returns the newly created uuid
 func Add(name, mac string) (string, error) {
-	if strings.Contains(name, ";") {
-		return "", errors.New("name cannot contain ;")
-	}
-
-	if _, err := os.Stat("wol-server"); errors.Is(err, os.ErrNotExist) {
-		if err := os.Mkdir("wol-server", os.ModePerm); err != nil {
-			return "", errors.New("could not create folder")
-		}
-	}
-
-	f, err := os.OpenFile(FILENAME, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	items, err := Get()
 	if err != nil {
-		return "", errors.New("could not open file")
+		return "", err
 	}
-	defer f.Close()
 
-	id := uuid.New().String()
+	item := Item{
+		Id:   uuid.New().String(),
+		Name: name,
+		Mac:  mac,
+	}
 
-	_, err = f.WriteString(fmt.Sprintf("%s;%s;%s\n", id, name, mac))
-	return id, err
+	if err := save(append(items, item)); err != nil {
+		return "", err
+	}
+
+	return item.Id, nil
 }
 
 // Delete removes a entry from the storage file
@@ -78,14 +62,32 @@ func Delete(id string) error {
 		return err
 	}
 
-	out := ""
+	newList := make([]Item, 0)
 	for _, item := range items {
 		if item.Id == id {
 			continue
 		}
 
-		out += fmt.Sprintf("%s;%s;%s\n", item.Id, item.Name, item.Mac)
+		newList = append(newList, item)
 	}
 
-	return os.WriteFile(FILENAME, []byte(out), 0644)
+	return save(newList)
+}
+
+// save all the data, by writing it to the disk
+func save(list []Item) error {
+	body, err := yaml.Marshal(list)
+	if err != nil {
+		return err
+	}
+
+	if _, err := os.Stat(FOLDER); err != nil && errors.Is(err, os.ErrNotExist) {
+		if err := os.Mkdir(FOLDER, os.ModePerm); err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	return os.WriteFile(FILENAME, body, 0644)
 }
