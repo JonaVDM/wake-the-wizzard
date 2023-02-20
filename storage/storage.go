@@ -27,7 +27,7 @@ func Get() ([]Item, error) {
 		return nil, err
 	}
 
-	var item []Item
+	var item []Item = make([]Item, 0)
 	if err := yaml.Unmarshal(file, &item); err != nil {
 		return nil, err
 	}
