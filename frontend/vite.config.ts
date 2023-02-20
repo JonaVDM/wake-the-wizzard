@@ -10,6 +10,7 @@ export default defineConfig({
         target: 'http://127.0.0.1:3080',
       }
     },
+    open: './app.html'
   },
   build: {
     rollupOptions: {
