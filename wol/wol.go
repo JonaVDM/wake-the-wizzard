@@ -2,12 +2,17 @@ package wol
 
 import (
 	"encoding/hex"
+	"errors"
 	"net"
 	"strings"
 )
 
 func SendWol(mac string) error {
-	msg, err := buildMessage(mac)
+	if ok := ValidMac(mac); !ok {
+		return errors.New("invalid mac addres")
+	}
+
+	msg, err := buildMessage(strings.ReplaceAll(mac, ":", ""))
 	if err != nil {
 		return err
 	}
@@ -47,4 +52,22 @@ func buildMessage(mac string) ([]byte, error) {
 	}
 
 	return msg, nil
+}
+
+func ValidMac(mac string) bool {
+	if len(mac) != 17 {
+		return false
+	}
+
+	if mac[2] != ':' || mac[5] != ':' || mac[8] != ':' || mac[11] != ':' || mac[14] != ':' {
+		return false
+	}
+
+	for _, c := range mac {
+		if c != ':' && (c < '0' || c > '9') && (c < 'a' || c > 'f') {
+			return false
+		}
+	}
+
+	return true
 }

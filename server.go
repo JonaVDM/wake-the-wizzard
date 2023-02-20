@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"net/http"
-	"strings"
 
 	"github.com/JonaVDM/wake-the-wizzard/storage"
 	"github.com/JonaVDM/wake-the-wizzard/wol"
@@ -42,8 +41,11 @@ func wakePc(c *gin.Context) {
 			continue
 		}
 
-		mac := strings.ReplaceAll(item.Mac, ":", "")
-		wol.SendWol(mac)
+		if err := wol.SendWol(item.Mac); err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+
 		c.String(http.StatusOK, "ok")
 		return
 	}

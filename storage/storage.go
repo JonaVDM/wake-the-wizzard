@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/JonaVDM/wake-the-wizzard/wol"
 	"github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 )
@@ -37,6 +38,10 @@ func Get() ([]Item, error) {
 
 // Add a entry to the file, returns the newly created uuid
 func Add(name, mac string) (string, error) {
+	if !wol.ValidMac(mac) {
+		return "", errors.New("invalid mac")
+	}
+
 	items, err := Get()
 	if err != nil {
 		return "", err
