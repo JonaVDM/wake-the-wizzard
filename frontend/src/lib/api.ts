@@ -22,10 +22,10 @@ export async function addDevice(name: string, mac: string) {
 }
 
 export async function deleteDevice(id: string) {
-  fetch(`/api/pc/${id}`, { method: 'DELETE' });
   devices.update(devices => devices.filter(device => device.id != id));
+  await fetch(`/api/pc/${id}`, { method: 'DELETE' });
 }
 
 export async function wakeDevice(id: string) {
-  fetch(`/api/wake/${id}`);
+  await fetch(`/api/wake/${id}`);
 }
