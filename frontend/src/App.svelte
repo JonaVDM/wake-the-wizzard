@@ -5,6 +5,7 @@
   import NewDevice from './lib/NewDevice.svelte';
 
   let error = '';
+  let showNew = false;
 
   onMount(async () => {
     try {
@@ -15,10 +16,22 @@
   });
 </script>
 
-<main class="container">
-  <h1>Wake On Lan</h1>
+<main class="container mx-auto p-3">
+  <div class="flex justify-between">
+    <h1 class="text-title font-semibold text-center md:text-left">
+      Wake On Lan
+    </h1>
 
-  <NewDevice />
+    <button on:click={() => (showNew = !showNew)} class="btn btn-secondary"
+      >Add new!</button
+    >
+  </div>
+
+  {#if showNew}
+    <div class="py-2">
+      <NewDevice on:close={() => (showNew = false)} />
+    </div>
+  {/if}
 
   {#if error}
     <article>
@@ -27,18 +40,8 @@
   {/if}
 
   {#each $devices as device (device.id)}
-    <DevideCard {...device} />
+    <div class="py-4">
+      <DevideCard {...device} />
+    </div>
   {/each}
 </main>
-
-<style>
-  h1 {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  article {
-    background-color: rgb(179, 0, 0);
-    color: white;
-  }
-</style>

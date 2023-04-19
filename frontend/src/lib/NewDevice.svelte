@@ -1,19 +1,21 @@
 <script lang="ts">
-  import { slide, fly } from 'svelte/transition';
+  import { createEventDispatcher } from 'svelte';
+  import { slide } from 'svelte/transition';
   import { addDevice } from './api';
 
-  let showForm = false;
   let mac = '';
   let name = '';
   let loading = false;
   let error = '';
+
+  const dispatch = createEventDispatcher();
 
   const submit = async () => {
     try {
       loading = true;
       await addDevice(name, mac);
       loading = false;
-      showForm = false;
+      dispatch('close');
     } catch (e) {
       loading = false;
       error = 'Could not create new entry';
@@ -21,52 +23,31 @@
   };
 </script>
 
-<article>
-  <div class="flex">
-    <h3>Add a new device</h3>
-    {#if !showForm}
-      <button transition:fly class="half" on:click={() => (showForm = true)}>
-        Show
-      </button>
-    {/if}
-  </div>
-  <form>
-    {#if showForm}
-      <div transition:slide>
-        <div class="grid">
-          <label>
-            Name
-            <input type="text" bind:value={name} />
-          </label>
+<div class="bg-base-200 p-4 rounded-lg shadow-md">
+  <form on:submit|preventDefault={submit}>
+    <div transition:slide>
+      <label class="my-2 block">
+        Name
+        <input
+          class="input input-bordered w-full"
+          type="text"
+          bind:value={name}
+        />
+      </label>
 
-          <label>
-            Mac
-            <input type="text" bind:value={mac} />
-          </label>
-        </div>
+      <label class="my-2 block">
+        Mac
+        <input
+          type="text"
+          bind:value={mac}
+          class="input input-bordered w-full"
+        />
+      </label>
 
-        {#if error != ''}
-          <p class="error">{error}</p>
-        {/if}
-        <button aria-busy={loading} on:click|preventDefault={submit}>
-          Create
-        </button>
-      </div>
-    {/if}
+      {#if error != ''}
+        <p class="error">{error}</p>
+      {/if}
+      <button class="btn btn-primary my-2">Create</button>
+    </div>
   </form>
-</article>
-
-<style>
-  .flex {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .half {
-    width: 50%;
-  }
-
-  .error {
-    color: rgb(192, 2, 2);
-  }
-</style>
+</div>
