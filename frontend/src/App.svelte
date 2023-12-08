@@ -1,17 +1,18 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { loadDevices, devices } from './lib/api';
-  import DevideCard from './lib/DevideCard.svelte';
-  import NewDevice from './lib/NewDevice.svelte';
+  import { onMount } from "svelte";
+  import { loadDevices, devices } from "./lib/api";
+  import DevideCard from "./lib/DevideCard.svelte";
+  import NewDevice from "./lib/NewDevice.svelte";
+  import Notification from "./lib/Notification.svelte";
 
-  let error = '';
+  let error = "";
   let showNew = false;
 
   onMount(async () => {
     try {
       await loadDevices();
     } catch (e) {
-      error = 'Error while getting data from the server';
+      error = "Error while getting data from the server";
     }
   });
 </script>
@@ -26,6 +27,8 @@
       >Add new!</button
     >
   </div>
+
+  <Notification />
 
   {#if showNew}
     <div class="py-2">

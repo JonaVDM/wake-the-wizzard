@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  import { slide } from 'svelte/transition';
-  import { addDevice } from './api';
+  import { createEventDispatcher } from "svelte";
+  import { slide } from "svelte/transition";
+  import { addDevice } from "./api";
 
-  let mac = '';
-  let name = '';
+  let mac = "";
+  let name = "";
   let loading = false;
-  let error = '';
+  let error = "";
 
   const dispatch = createEventDispatcher();
 
@@ -15,10 +15,10 @@
       loading = true;
       await addDevice(name, mac);
       loading = false;
-      dispatch('close');
+      dispatch("close");
     } catch (e) {
       loading = false;
-      error = 'Could not create new entry';
+      error = e;
     }
   };
 </script>
@@ -44,8 +44,8 @@
         />
       </label>
 
-      {#if error != ''}
-        <p class="error">{error}</p>
+      {#if error != ""}
+        <p class="text-error">{error}</p>
       {/if}
       <button class="btn btn-primary my-2">Create</button>
     </div>

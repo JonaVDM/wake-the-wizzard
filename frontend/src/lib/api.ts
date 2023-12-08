@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 
 export const devices = writable<Device[]>([]);
+export const message = writable<string>();
+export const error = writable<string>();
 
 export async function loadDevices() {
   const req = await fetch('/api/pc');
@@ -18,7 +20,12 @@ export async function addDevice(name: string, mac: string) {
   });
 
   const data = await req.json();
-  devices.update(devices => [...devices, { name, mac, id: data.id }]);
+  if (req.status == 200) {
+    devices.update(devices => [...devices, { name, mac, id: data.id }]);
+    message.set('Device added!');
+  } else {
+    throw new Error(data.error);
+  }
 }
 
 export async function deleteDevice(id: string) {
@@ -27,5 +34,27 @@ export async function deleteDevice(id: string) {
 }
 
 export async function wakeDevice(id: string) {
-  await fetch(`/api/wake/${id}`);
+  try {
+    const response = await fetch(`/api/wake/${id}`);
+    const body = await response.text()
+    switch (response.status) {
+      case 200:
+        message.set('Wake-On-Lan send!');
+        break;
+
+      case 404:
+        error.set('PC not found');
+        break;
+
+      case 500:
+        error.set(`Internal server error: ${body}`);
+        break;
+
+      default:
+        error.set(`Error ${response.status}: ${body}`);
+        break;
+    }
+  } catch (e) {
+    console.log('somethig bad just happened: ', e);
+  }
 }
