@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net"
 	"net/http"
 
 	"github.com/JonaVDM/wake-the-wizzard/frontend"
@@ -10,6 +11,17 @@ import (
 )
 
 func Serve(addr string) error {
+	r := initGin()
+	return r.Run(addr)
+}
+
+func ServeListner(ln net.Listener) error {
+	r := initGin()
+
+	return http.Serve(ln, r.Handler())
+}
+
+func initGin() *gin.Engine {
 	r := gin.Default()
 
 	r.SetTrustedProxies(nil)
@@ -21,7 +33,7 @@ func Serve(addr string) error {
 	r.StaticFileFS("/", "app.html", http.FS(frontend.NewCustomFS()))
 	r.StaticFS("/assets", http.FS(frontend.NewAssetFs()))
 
-	return r.Run(addr)
+	return r
 }
 
 func wakePc(c *gin.Context) {
