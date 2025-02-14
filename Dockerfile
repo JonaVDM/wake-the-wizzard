@@ -18,4 +18,4 @@ FROM alpine
 COPY --from=go-builder /app/wake-the-wizzard /wol
 ENV GIN_MODE=release
 EXPOSE 3080
-CMD ["/wol"]
+CMD ["/wol", "serve"]

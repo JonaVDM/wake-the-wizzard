@@ -1,18 +1,15 @@
-package main
+package server
 
 import (
-	"embed"
 	"net/http"
 
+	"github.com/JonaVDM/wake-the-wizzard/frontend"
 	"github.com/JonaVDM/wake-the-wizzard/storage"
 	"github.com/JonaVDM/wake-the-wizzard/wol"
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed frontend/dist/*
-var static embed.FS
-
-func main() {
+func Serve(addr string) error {
 	r := gin.Default()
 
 	r.SetTrustedProxies(nil)
@@ -21,10 +18,10 @@ func main() {
 	r.GET("/api/pc", getPc)
 	r.POST("/api/pc", postPc)
 	r.DELETE("/api/pc/:id", deletePc)
-	r.StaticFileFS("/", "app.html", http.FS(CustomFS{static}))
-	r.StaticFS("/assets", http.FS(CustomAssetsFS{static}))
+	r.StaticFileFS("/", "app.html", http.FS(frontend.NewCustomFS()))
+	r.StaticFS("/assets", http.FS(frontend.NewAssetFs()))
 
-	r.Run(":3080")
+	return r.Run(addr)
 }
 
 func wakePc(c *gin.Context) {
